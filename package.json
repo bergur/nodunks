@@ -4,7 +4,8 @@
   "description": "No Dunks Fan Globilization",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel watch ./app/index.html",
+    "start": "node ./server/index.js",
+    "dev": "parcel watch ./app/index.html"    ,
     "build": "parcel build ./app/index.html",
     "heroku-postbuild": "npm run build"
   },
