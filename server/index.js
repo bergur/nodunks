@@ -13,8 +13,8 @@ app.use(bodyParser.json())
 app.use('/', express.static('dist'))
 
 app.get('/ip', (req, res, next) => {
-  // const ip = requestIp.getClientIp(req)
-  const ip = '200.194.51.97'
+  const ip = requestIp.getClientIp(req)
+  // const ip = '200.194.51.97'
   return getCountryByIp(ip)
     .then(country => {
       res.json({ ip, country })
