@@ -2,10 +2,13 @@
   <div class="container is-centered">
     <img src="nodunks_logo.png" height="400" width="400" />
     
-    <Welcome></Welcome>
+    <Welcome
+      v-if="submitted === false"
+    >
+    </Welcome>
 
     <Countries
-      v-if="submitted === undefined"
+      v-if="submitted === false"
       :list="countries"
       :default="answers.country"
       :loading="loading"
@@ -13,12 +16,23 @@
     ></Countries>
 
     <Quiz
-      v-if="submitted === undefined"
+      v-if="submitted === false"
       @change="updateQuiz"
     >
     </Quiz>
 
-    <Submit :success="submitted" @click="submit"></Submit>
+    <Submit
+      :submitted="submitted"
+      :error="error"
+      @click="submit"
+    >
+    </Submit>
+
+    <Graph
+      v-if="submitted"
+      :data="results"
+    >
+    </Graph>
   </div>
 </template>
 
@@ -29,6 +43,7 @@ import Countries from './Countries'
 import Quiz from './Quiz'
 import Twitter from './Twitter'
 import Submit from './Submit'
+import Graph from './Graph'
 
 export default {
   components: {
@@ -36,7 +51,8 @@ export default {
     Countries,
     Quiz,
     Twitter,
-    Submit
+    Submit,
+    Graph
   },
   data() {
     return {
@@ -47,7 +63,9 @@ export default {
         quiz: [],
       },
       loading: false,
-      submitted: undefined
+      submitted: undefined,
+      error: false,
+      results: []
     }
   },
   methods: {
@@ -57,22 +75,42 @@ export default {
     updateQuiz(val) {      
       this.answers.quiz = val
     },
-    submit() {
+    submit() {      
       return agent
         .post('/submit')
         .send(this.answers)
-        .then(res => {
+        .then(res => {          
           if (res.body && res.body.id) {
             this.submitted = true
+            return this.getResults()
           }
         })
         .catch(() => {
-          this.submitted = false
+          this.error = true
+          this.submitted = undefined
+        })
+    },
+    getResults() {
+      return agent
+        .get('/listenerspercountry')
+        .then(res => {        
+          this.results = res.body
         })
     }
-  },
+  },  
   created() {
     this.loading = true
+
+    agent
+      .get('/submitted')
+      .then(res => {        
+        this.submitted = res.body.submitted
+
+        if (this.submitted) {
+          this.getResults()
+        }
+      })
+    
     agent
       .get('/ip')
       .then(res => {
@@ -80,12 +118,15 @@ export default {
         this.answers.country = res.body.country
         this.loading = false
       })
+      .catch(() => {
+        this.loading = false
+      })
     
     agent
       .get('/countries')
       .then(res => {        
         this.countries = res.body
-      })
+      })      
   }
 }
 </script>

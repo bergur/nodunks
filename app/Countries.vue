@@ -6,7 +6,7 @@
         v-model="selected"
         @change="$emit('change', selected)">
         <option>Select a country</option>
-        <option v-for="item in list" :key="item">{{ item }}</option>
+        <option v-for="item in list" :key="item.name">{{ item.name }}</option>
       </select>
     </div>
   </div>
@@ -22,11 +22,12 @@ export default {
   ],
   data() {
     return {
-      selected: this.default
+      selected: this.default || 'Select a country'
     }
   },
   watch: {
     default(val) {
+      console.log(val)
       this.selected = val
     }
   }

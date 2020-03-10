@@ -27,19 +27,29 @@
 
 <script>
 export default {
-  props: ['data', 'success'],
+  props: [
+    'data',
+    'submitted',
+    'error'
+  ],
   data() {
     return {
-      showButton: true,
+      showButton: false,
       showThanks: false,
       showError: false,      
     }
   },
   watch: {
-    success(val) {
-      this.showButton = val === undefined      
+    submitted (val) {
+      console.log('submitted', val)
       this.showThanks = val === true
-      this.showError = val === false
+      this.showButton = val === false      
+    },
+    error (val) {
+      console.log('error', val)
+      this.showThanks = val === false
+      this.showButton = val === false
+      this.showError = val === true
     }
   }
 }

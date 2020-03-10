@@ -6,18 +6,27 @@ const requestIp = require('request-ip')
 const getCountryByIp = require('./lib/countryByIp')
 const getAllCountries = require('./lib/allCountries')
 const insert = require('./lib/insert')
+const select = require('./lib/select')
+const listenersPerCountry = require('./lib/listenersPerCountry')
 
 const app = express()
 
 app.use(bodyParser.json())
 app.use('/', express.static('dist'))
 
+// app.use(requestIp.mw())
+app.use((req, res, next) => {
+  req.clientIp = '200.194.51.97'
+  next()
+})
+
 app.get('/ip', (req, res, next) => {
-  const ip = requestIp.getClientIp(req)
-  // const ip = '200.194.51.97'
-  return getCountryByIp(ip)
+  return getCountryByIp(req.clientIp)
     .then(country => {
-      res.json({ ip, country })
+      res.json({ 
+        ip: req.clientIp,
+        country
+      })
     })
     .catch(next)
 })
@@ -36,7 +45,23 @@ app.post('/submit', (req, res, next) => {
       res.json({ id })
     })
     .catch(next)
-
 })
+
+app.get('/submitted', (req, res, next) => {
+  return select(req.clientIp)
+    .then(submitted => {
+      res.json({ submitted })
+    })
+    .catch(next)
+})
+
+app.get('/listenerspercountry', (req, res, next) => {
+  return listenersPerCountry()
+    .then(data => {
+      res.json(data)
+    })
+    .catch(next)
+})
+
 
 app.listen(process.env.PORT || 3000)
