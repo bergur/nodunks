@@ -13,12 +13,7 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use('/', express.static('dist'))
-
-// app.use(requestIp.mw())
-app.use((req, res, next) => {
-  req.clientIp = '200.194.51.97'
-  next()
-})
+app.use(requestIp.mw())
 
 app.get('/ip', (req, res, next) => {
   return getCountryByIp(req.clientIp)
