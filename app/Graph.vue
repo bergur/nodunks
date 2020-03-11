@@ -69,8 +69,7 @@ export default {
   },
   watch: {
     data(val) {
-      console.log('watching')
-      this.chartOptions.series.data = val
+      this.chartOptions.series[0].data = val
     }
   }
   
