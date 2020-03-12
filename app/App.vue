@@ -14,13 +14,7 @@
       :loading="loading"
       @change="updateCountry"
     ></Countries>
-
-    <Quiz
-      v-if="submitted === false"
-      @change="updateQuiz"
-    >
-    </Quiz>
-
+    
     <Submit
       :submitted="submitted"
       :error="error"
@@ -40,7 +34,6 @@
 import agent from 'superagent'
 import Welcome from './Welcome'
 import Countries from './Countries'
-import Quiz from './Quiz'
 import Twitter from './Twitter'
 import Submit from './Submit'
 import Graph from './Graph'
@@ -48,8 +41,7 @@ import Graph from './Graph'
 export default {
   components: {
     Welcome,
-    Countries,
-    Quiz,
+    Countries,    
     Twitter,
     Submit,
     Graph
